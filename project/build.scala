@@ -2,7 +2,7 @@ import sbt._
 import sbt.Keys._
 import spray.revolver.RevolverPlugin._
 
-object PayitCore extends Build {
+object PayItCore extends Build {
 
   lazy val _scalacOptions = Seq("-deprecation", "-unchecked", "-feature")
 

@@ -1,4 +1,4 @@
-# PayIT Core
+# PayIt Core
 -----
 
 
