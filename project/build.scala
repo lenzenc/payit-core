@@ -1,14 +1,38 @@
+import java.io.File
+import java.nio.charset.StandardCharsets
+import java.nio.file.{Paths, Files}
+
 import sbt._
 import sbt.Keys._
 import spray.revolver.RevolverPlugin._
+import complete.DefaultParsers._
+
+import scala.io.Source
 
 object PayItCore extends Build {
 
+  val MigrationsPath = "src/main/scala/com/payit/data/migrations"
+
   lazy val _scalacOptions = Seq("-deprecation", "-unchecked", "-feature")
 
-  val testAll = TaskKey[Unit]("test-all", "Runs All Unit & Integration Tests")
+  lazy val migration = inputKey[Unit]("Creates a MongoDB Migration Class.")
+  lazy val testAll = TaskKey[Unit]("test-all", "Runs All Unit & Integration Tests")
 
   val testAllTask = testAll := ()
+  val migrationTask = migration := {
+    val args: Seq[String] = spaceDelimited("<arg>").parsed
+    if (args.size < 1 || args(0).toString.trim.length == 0) sys.error("Migration Task takes a name argument!")
+    val name = s"Migrate_${System.currentTimeMillis()}_${args(0).toString.trim}"
+    val fileName = s"$MigrationsPath${File.separator}$name.scala"
+    val migration = Source.fromFile("project/migration.tpl").mkString.replace(
+      "$MigrationClassName",
+      name)
+    Files.createDirectories(Paths.get(MigrationsPath))
+    Files.write(
+      Paths.get(fileName),
+      migration.getBytes(StandardCharsets.UTF_8))
+    println(s"Created Migration: $fileName")
+  }
 
   lazy val commonSettings = Seq(
     version := "1.0",
@@ -50,6 +74,7 @@ object PayItCore extends Build {
         "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0" % "compile",
         "org.clapper" % "classutil_2.11" % "1.0.5" % "compile"
       ),
+      migrationTask,
       testAllTask
     ) ++ Revolver.settings ++ Defaults.itSettings ++ Seq(
       testAll <<= testAll.dependsOn(test in IntegrationTest),

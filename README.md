@@ -1,6 +1,37 @@
 # PayIt Core
 -----
 
+## Mongo Migrations
+This application is backed by MongoDB and unlike a typical RDMS that requires DDL migration scripts, MongoDB does not, basically the "schema" of a document is defined by code itself.  However there are things and situations that might need a more traditional migration script strategy, for example added MongoDB indexes to collections and potenitally modifying cross documents based on changes to document structures.
+
+To create a new migration run the following SBT command;
+
+### From Outside SBT Console
+    
+    sbt "migration <<name>>"
+
+### From Within SBT Console
+
+    sbt
+    > migration <<name>>
+    
+In both cases the <<name> would be the name of the script that gets created, for example, AddIndexesToCustomers.
+
+The result of the "migration" command will be a new ".scala" class that gets created in the following directory;
+
+    src/main/scala/com/payit/data/migrations/Migrate_89789798789798_AddIndexesToCustomers
+    
+### Migration Script Class Structure
+The newly generated migration script is a class that extends "MongoMigration".
+    
+The 2 methods that need to be implemented are;
+
+    def up(db: MongoDB)
+    def down(db: MongoDB)
+    
+As probably obvious the "up" method is run to add a new migration to an existing MongoDB DB and the "down" is used to rollback the changes added by the script.
+    
+MongoMigration also has some helpful methods for adding/dropping indexes.
 
 ## Testing
 
