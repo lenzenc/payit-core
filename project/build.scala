@@ -47,7 +47,8 @@ object PayItCore extends Build {
         "io.spray" %% "spray-testkit" % "1.3.3" % "compile",
         "io.spray"%%"spray-json"%"1.3.2" % "compile",
         "org.mongodb" % "casbah_2.11" % "2.8.2" % "compile",
-        "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0" % "compile"
+        "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0" % "compile",
+        "org.clapper" % "classutil_2.11" % "1.0.5" % "compile"
       ),
       testAllTask
     ) ++ Revolver.settings ++ Defaults.itSettings ++ Seq(
