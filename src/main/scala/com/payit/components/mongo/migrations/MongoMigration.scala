@@ -21,6 +21,13 @@ abstract class MongoMigration(db: MongoDB) {
     )
   }
 
+  def addTextIndex(name: String, field: String) = {
+    collection.createIndex(
+      MongoDBObject(field -> "text"),
+      MongoDBObject(field -> name)
+    )
+  }
+
   def dropIndex(name: String) = {
     collection.dropIndex(name)
   }
