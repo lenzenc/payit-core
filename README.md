@@ -1,6 +1,30 @@
 # PayIt Core
 -----
 
+## Running this Application
+
+### From Outside SBT Console
+    
+    sbt run
+
+### From Within SBT Console
+
+    sbt
+    > run
+    
+### Using Automatic Restart
+If you are developing within this application and would like to just start the application and have it automatically cycle itself after it detects code changes you are run the following command from the SBT console;
+ 
+    sbt
+    > ~ re-start
+    
+### ReInitialize MongoDB    
+During start up of this application it will attempt to run any unapplied migrations to the "default" configured MongoDB.  If you would rather it completed reinitialize the schema you can add the following argument at the end of the run command, for example;
+
+    sbt run reset
+    > run reset
+    > ~ re-start reset
+
 ## Mongo Migrations
 This application is backed by MongoDB and unlike a typical RDMS that requires DDL migration scripts, MongoDB does not, basically the "schema" of a document is defined by code itself.  However there are things and situations that might need a more traditional migration script strategy, for example added MongoDB indexes to collections and potenitally modifying cross documents based on changes to document structures.
 
