@@ -3,16 +3,16 @@ package com.payit.data.migrations
 import com.mongodb.casbah.Imports._
 import com.payit.components.mongo.migrations.MongoMigration
 
-class Migrate_1443209148712_AddCustomerIndexes extends MongoMigration {
+class Migrate_1443209148712_AddCustomerIndexes(db: MongoDB) extends MongoMigration(db) {
 
-  def up(db: MongoDB) = {
-    val collection = db("customers")
-    addUniqueIndex(collection, "UNIQ_NAME_IDX", "name")
+  val collectionName = "customers"
+
+  def up = {
+    addUniqueIndex("UNIQ_NAME_IDX", "name")
   }
 
-  def down(db: MongoDB) = {
-    val collection = db("customers")
-    dropIndex(collection, "UNIQ_NAME_IDX")
+  def down = {
+    dropIndex("UNIQ_NAME_IDX")
   }
 
 }

@@ -3,13 +3,16 @@ package com.payit.components.mongo.migrations
 import com.mongodb.casbah.{MongoDB, MongoCollection}
 import com.mongodb.casbah.commons.MongoDBObject
 
-trait MongoMigration {
+abstract class MongoMigration(db: MongoDB) {
 
-  def up(db: MongoDB)
+  def collectionName: String
+  protected lazy val collection = db(collectionName)
 
-  def down(db: MongoDB)
+  def up: Unit
 
-  def addUniqueIndex(collection: MongoCollection, name: String, fields: String*) = {
+  def down: Unit
+
+  def addUniqueIndex(name: String, fields: String*) = {
     var map = MongoDBObject()
     fields.foreach { i => map.put(i, 1) }
     collection.createIndex(
@@ -18,7 +21,7 @@ trait MongoMigration {
     )
   }
 
-  def dropIndex(collection: MongoCollection, name: String) = {
+  def dropIndex(name: String) = {
     collection.dropIndex(name)
   }
 

@@ -84,14 +84,14 @@ class MongoMigrator(mongoConfig: String, config: Configuration) {
                             db: MongoDB) =
   {
 
-    val migration = migrationClass.getConstructor().newInstance()
+    val migration = migrationClass.getConstructor(classOf[MongoDB]).newInstance(db)
 
     direction match {
       case Up =>
-        migration.up(db)
+        migration.up
         versionCollection.insert(MongoDBObject("version" -> version, "appliedAt" -> DateTime.now))
       case Down =>
-        migration.down(db)
+        migration.down
         versionCollection.remove(MongoDBObject("version" -> version))
     }
 
@@ -167,9 +167,8 @@ class MongoMigrator(mongoConfig: String, config: Configuration) {
 
       val file = new File(u.substring("file:".length))
       val classesMap = ClassFinder.classInfoMap(ClassFinder(
-        Seq(new File(u.substring("file:".length)))).getClasses().toIterator).foreach
-      { case(clazz, info) =>
-        if (info.interfaces.contains(classOf[MongoMigration].getName)) classNames += clazz
+        Seq(new File(u.substring("file:".length)))).getClasses().toIterator).foreach {
+        case(clazz, info) if (info.superClassName.equals(classOf[MongoMigration].getName)) => classNames += clazz
       }
 
     }

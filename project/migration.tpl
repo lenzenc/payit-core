@@ -3,13 +3,13 @@ package com.payit.data.migrations
 import com.mongodb.casbah.Imports._
 import com.payit.components.mongo.migrations.MongoMigration
 
-class $MigrationClassName extends MongoMigration {
+class $MigrationClassName(db: MongoDB) extends MongoMigration(db) {
 
-  def up(db: MongoDB) = {
+  def up = {
 
   }
 
-  def down(db: MongoDB) = {
+  def down = {
 
   }
 
