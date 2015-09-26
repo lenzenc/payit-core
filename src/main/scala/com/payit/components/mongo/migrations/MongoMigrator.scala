@@ -5,13 +5,14 @@ import java.net.{URLDecoder, URL}
 
 import com.mongodb.casbah.Imports._
 import com.payit.components.core.Configuration
+import com.typesafe.scalalogging.LazyLogging
 import org.clapper.classutil.ClassFinder
 import org.joda.time.DateTime
 
 import scala.collection.immutable.TreeMap
 import scala.collection.{immutable, mutable}
 
-class MongoMigrator(mongoConfig: String, config: Configuration) {
+class MongoMigrator(mongoConfig: String, config: Configuration) extends LazyLogging {
 
   com.mongodb.casbah.commons.conversions.scala.RegisterJodaTimeConversionHelpers()
 
@@ -85,7 +86,7 @@ class MongoMigrator(mongoConfig: String, config: Configuration) {
   {
 
     val migration = migrationClass.getConstructor(classOf[MongoDB]).newInstance(db)
-
+    logger.debug(s"Running Migration: ${migrationClass.getName}")
     direction match {
       case Up =>
         migration.up

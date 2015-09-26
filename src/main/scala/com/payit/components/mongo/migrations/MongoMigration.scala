@@ -21,10 +21,12 @@ abstract class MongoMigration(db: MongoDB) {
     )
   }
 
-  def addTextIndex(name: String, field: String) = {
+  def addTextIndex(name: String, fields: String*) = {
+    var map = MongoDBObject()
+    fields.foreach { i => map.put(i, "text") }
     collection.createIndex(
-      MongoDBObject(field -> "text"),
-      MongoDBObject(field -> name)
+      map,
+      MongoDBObject("name" -> name)
     )
   }
 
