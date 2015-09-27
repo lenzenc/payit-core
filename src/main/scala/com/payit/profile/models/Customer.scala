@@ -1,11 +1,10 @@
 package com.payit.profile.models
 
-import com.payit.components.core.models.{Id, Timestamps}
+import com.payit.components.core.models.{Model, Id, Timestamps}
 import com.mongodb.casbah.Imports.ObjectId
-import com.payit.components.mongo.models.MongoModel
+import com.payit.components.mongo.models.{MongoModel, MongoId}
 
-case class CustomerId(value: ObjectId) extends Id(value)
-
+case class CustomerId(value: ObjectId = new ObjectId) extends MongoId
 case class Customer(
   id: Option[CustomerId],
   name: String,
@@ -13,4 +12,11 @@ case class Customer(
   domains: Seq[Domain],
   isActive: Boolean = true,
   timestamps: Timestamps = Timestamps())
-extends MongoModel[Customer]
+extends MongoModel[CustomerId, Customer]
+{
+
+  def withId(idValue: ObjectId) = copy(id = Some(CustomerId(new ObjectId)))
+
+}
+
+
