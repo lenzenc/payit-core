@@ -1,12 +1,14 @@
 language: scala
 scala:
-   - 2.11.4
-
+- 2.11.4
 jdk:
-  - oraclejdk8
-
+- oraclejdk8
 script:
-  - sbt ++$TRAVIS_SCALA_VERSION test-all
-
+- sbt ++$TRAVIS_SCALA_VERSION test-all
 services:
-  - mongodb
+- mongodb
+deploy:
+  provider: heroku
+  app: payit
+  api_key:
+    secure: NXfPmIFmXkjI9W/Y3kqwXPe8nu7/1eOqxJ5EnGkSdV1lYEHqG0uUSm1sx9zPIB/SfK1Ow9StQEesHuQ0XSB2tYrtVBYTdDw1h6BqnWKxQD9veQaP+JjL24GhU6wjgEPUHFggJAXxtEdk7f6ZFHOvviNVw4av2fBUQBF9UET4gJ1m62ozhmkpukMecXWFZ8OMSaqsfZd44tpCgSSkf6Ahg2VmXNZNBfVJY2Su+76X9OKq8QvFWHI9jvzCkJJECR0BFOf7P+d3G8u0KAY+0fbn8KBCbYvhsmLyKToRlD1CqCa3L20vI/lPbEoHyOUettfpm/be7WHIjs/dRZcIV3N0ojh64D8FbWSf8KGRuMlFzIGl7q12czPJutzfdukgJuaah5oJg3Nn8sfz2Yur49AhLD/M0YKRsOAG5FIdvr1azaBgWd3nu1kG/H/7hRmlaCMswLMUr/QLs2kdT/o/BuHfqOOiOCd7dwdkARAWFvTLB8nkZtGEoB1AbHGmg2d1BEftB3kJxw83yAcoVogSAzGWeQ2JeXtmginnOBWvnT1nJt22X5dUs+wSzbZrJraAdSWHOs5LoCmXxDqaGzBav/4bMtk1Qnkzf1NOPmVfgTz3wyrjd2LWGTqfltskJE60+aFW734Gpfiw+l/MXzcXU6S3sCQcTfHy8qqm9UJ65NHsxt4=
