@@ -6,6 +6,7 @@ import sbt._
 import sbt.Keys._
 import spray.revolver.RevolverPlugin._
 import complete.DefaultParsers._
+import com.typesafe.sbt.SbtStartScript
 
 import scala.io.Source
 
@@ -79,7 +80,7 @@ object PayItCore extends Build {
     ) ++ Revolver.settings ++ Defaults.itSettings ++ Seq(
       testAll <<= testAll.dependsOn(test in IntegrationTest),
       testAll <<= testAll.dependsOn(test in Test)
-    )
+    ) ++ SbtStartScript.startScriptForClassesSettings
   )
 
 }
