@@ -1,8 +1,9 @@
 package com.payit.components.core.daos
 
-/**
- * Created by craigl on 9/27/15.
- */
-trait DAO {
+import com.payit.components.core.models.{Model, Id}
+
+trait DAO[ID <: Id, M <: Model[ID, M]] {
+
+  def insert(model: M): M
 
 }
