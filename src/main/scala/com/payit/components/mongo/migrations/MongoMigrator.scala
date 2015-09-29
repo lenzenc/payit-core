@@ -174,22 +174,6 @@ class MongoMigrator(val dbConfigName: String, val config: Configuration) extends
       case _ => sys.error(s"Unknown URL: $url pattern!")
     }
 
-
-//    val classNames = new mutable.HashSet[String]
-//    val u = URLDecoder.decode(url.toString, "UTF-8")
-//    logger.debug(s"Mongo Migration Url: ${url.toString}")
-//    if (u.startsWith("file:")) {
-//
-//      val file = new File(u.substring("file:".length))
-//      logger.debug(s"File Path: $file")
-//      val classesMap = ClassFinder.classInfoMap(ClassFinder(
-//        Seq(new File(u.substring("file:".length)))).getClasses().toIterator).foreach {
-//        case(clazz, info) if (info.superClassName.equals(classOf[MongoMigration].getName)) => classNames += clazz
-//      }
-//
-//    }
-//    classNames
-
   }
 
   private def classNamesInDir(file: File): mutable.Set[String] = {
