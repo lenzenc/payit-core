@@ -93,6 +93,20 @@ To run a single integration test specification run the following command in the 
 Running all tests, i.e. unit and integration tests together, run the following command in the SBT console;
 
   test-all
+  
+## CI & BAT
+This application is using Travis CI for it's CI SDLC cycle, build history can be found here;
+
+    https://travis-ci.org/lenzenc/payit-core
+    
+Upon successful builds and tests on Travis the PayIt application is deployed to a BAT Heroku environment for further functional and user acceptance testing;
+    
+    https://payit.herokuapp.com/
+    
+### Direct Deployment to BAT
+If for some reason you need to deploy local changes to the BAT environment on Heroku you can use the following command;
+
+    git push heroku master
 
 ## MongoDB Commands
 ----
