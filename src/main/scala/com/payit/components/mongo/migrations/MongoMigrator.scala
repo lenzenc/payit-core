@@ -2,6 +2,7 @@ package com.payit.components.mongo.migrations
 
 import java.io.File
 import java.net.{URLDecoder, URL}
+import java.util.jar.JarFile
 
 import com.mongodb.casbah.Imports._
 import com.payit.components.core.Configuration
@@ -161,18 +162,68 @@ class MongoMigrator(val dbConfigName: String, val config: Configuration) extends
 
   private def classNamesInResources(url: URL, packageName: String): mutable.Set[String] = {
 
-    val classNames = new mutable.HashSet[String]
     val u = URLDecoder.decode(url.toString, "UTF-8")
-    logger.debug(s"Mongo Migration Url: ${url.toString}")
-    if (u.startsWith("file:")) {
-
-      val file = new File(u.substring("file:".length))
-      val classesMap = ClassFinder.classInfoMap(ClassFinder(
-        Seq(new File(u.substring("file:".length)))).getClasses().toIterator).foreach {
-        case(clazz, info) if (info.superClassName.equals(classOf[MongoMigration].getName)) => classNames += clazz
+    u.toString match {
+      case url if url.startsWith("file:") => classNamesInDir(new File(u.substring("file:".length)))
+      case url if url.startsWith("jar:file:") => {
+        val index = u.lastIndexOf('!')
+        val path = if (index == -1) u.substring("jar:file:".length)
+        else u.substring("jar:file:".length, index)
+        classNamesInJar(path, packageName)
       }
-
+      case _ => sys.error(s"Unknown URL: $url pattern!")
     }
+
+
+//    val classNames = new mutable.HashSet[String]
+//    val u = URLDecoder.decode(url.toString, "UTF-8")
+//    logger.debug(s"Mongo Migration Url: ${url.toString}")
+//    if (u.startsWith("file:")) {
+//
+//      val file = new File(u.substring("file:".length))
+//      logger.debug(s"File Path: $file")
+//      val classesMap = ClassFinder.classInfoMap(ClassFinder(
+//        Seq(new File(u.substring("file:".length)))).getClasses().toIterator).foreach {
+//        case(clazz, info) if (info.superClassName.equals(classOf[MongoMigration].getName)) => classNames += clazz
+//      }
+//
+//    }
+//    classNames
+
+  }
+
+  private def classNamesInDir(file: File): mutable.Set[String] = {
+
+    logger.debug(s"File Path: $file")
+    val classNames = new mutable.HashSet[String]
+
+    val classesMap = ClassFinder.classInfoMap(ClassFinder(
+      Seq(new File(file.getPath))).getClasses().toIterator).foreach {
+      case(clazz, info) if (info.superClassName.equals(classOf[MongoMigration].getName)) => classNames += clazz
+    }
+
+    classNames
+
+  }
+
+  private def classNamesInJar(path: String, packageName: String): mutable.Set[String] = {
+
+    logger.debug(s"Jar Path: $path")
+    val classNames = new mutable.HashSet[String]
+    val pn = packageName.replace('.', '/') + '/'
+    val jar = new JarFile(path, false)
+    val entries = jar.entries
+    while (entries.hasMoreElements) {
+      val name = entries.nextElement.getName
+      if (name.startsWith(pn) && name.endsWith(".class")) {
+        val className = name.substring(0, name.length - ".class".length).replace('/', '.')
+        if (!className.substring(pn.length).contains('.')) {
+          logger.debug(s"Adding Jar ClassName: $className")
+          classNames += className
+        }
+      }
+    }
+
     classNames
 
   }
