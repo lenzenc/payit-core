@@ -15,11 +15,13 @@ object Server extends App with LazyLogging with MongoMigrations {
 
   lazy val config: Configuration = Configuration.load
   val dbConfigName = Properties.envOrElse("ENVIRONMENT", "dev").toLowerCase
+  logger.debug(s"Using DB Environment Config: $dbConfigName")
   lazy val command: MigrationCommand = args match {
     case Array(a) if a.equals("reset") => ResetApplyMigrations
     case _ => ApplyMigrations
   }
 
+  logger.debug(s"Running Mongo Migration Command: $command")
   migrate(command)
 
   implicit val actorSystem = ActorSystem()
