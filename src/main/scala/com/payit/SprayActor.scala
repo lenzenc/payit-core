@@ -14,7 +14,7 @@ trait DefaultService extends HttpService {
   val defaultRoute =
     path("") {
       get {
-        respondWithMediaType(`text/html`) { // XML is marshalled to `text/xml` by default, so we simply override here
+        respondWithMediaType(`text/html`) {
           complete {
             <html>
               <body>
