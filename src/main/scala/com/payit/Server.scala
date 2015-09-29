@@ -7,6 +7,8 @@ import com.payit.components.mongo.migrations.{ApplyMigrations, ResetApplyMigrati
 import com.typesafe.scalalogging.LazyLogging
 import spray.can.Http
 
+import scala.util.Properties
+
 object Server extends App with LazyLogging {
 
   logger.debug("Initializing & Running Payit!....")
@@ -21,7 +23,8 @@ object Server extends App with LazyLogging {
 
   implicit val actorSystem = ActorSystem()
   val service = actorSystem.actorOf(Props[SprayActor], "payit-core")
-  IO(Http)(actorSystem) ! Http.Bind(service, "0.0.0.0", port = 9001)
+  val port = Properties.envOrElse("PORT", "9001").toInt
+  IO(Http)(actorSystem) ! Http.Bind(service, "0.0.0.0", port = port)
   sys.addShutdownHook(actorSystem.shutdown())
 
 }
