@@ -9,17 +9,18 @@ import spray.can.Http
 
 import scala.util.Properties
 
-object Server extends App with LazyLogging {
+object Server extends App with LazyLogging with MongoMigrations {
 
   logger.debug("Initializing & Running Payit!....")
 
-//  lazy val config: Configuration = Configuration.load
-//  lazy val command: MigrationCommand = args match {
-//    case Array(a) if a.equals("reset") => ResetApplyMigrations
-//    case _ => ApplyMigrations
-//  }
-//
-//  migrate(command)
+  lazy val config: Configuration = Configuration.load
+  val dbConfigName = Properties.envOrElse("ENVIRONMENT", "dev").toLowerCase
+  lazy val command: MigrationCommand = args match {
+    case Array(a) if a.equals("reset") => ResetApplyMigrations
+    case _ => ApplyMigrations
+  }
+
+  migrate(command)
 
   implicit val actorSystem = ActorSystem()
   val service = actorSystem.actorOf(Props[SprayActor], "payit-core")

@@ -8,8 +8,8 @@ trait MongoMigrations {
   def config: Configuration
 
   def basePackage = "com.payit.data.migrations"
-  def mongoDB = "default"
-  private lazy val migrator = new MongoMigrator("default", config)
+  def dbConfigName: String
+  private lazy val migrator = new MongoMigrator(dbConfigName, config)
 
   def migrate(command: MigrationCommand) = {
     migrator.migrate(command, basePackage)

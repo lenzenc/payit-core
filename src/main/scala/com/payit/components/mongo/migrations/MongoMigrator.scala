@@ -5,6 +5,7 @@ import java.net.{URLDecoder, URL}
 
 import com.mongodb.casbah.Imports._
 import com.payit.components.core.Configuration
+import com.payit.components.mongo.MongoDBSupport
 import com.typesafe.scalalogging.LazyLogging
 import org.clapper.classutil.ClassFinder
 import org.joda.time.DateTime
@@ -12,26 +13,19 @@ import org.joda.time.DateTime
 import scala.collection.immutable.TreeMap
 import scala.collection.{immutable, mutable}
 
-class MongoMigrator(mongoConfig: String, config: Configuration) extends LazyLogging {
+class MongoMigrator(val dbConfigName: String, val config: Configuration) extends LazyLogging with MongoDBSupport {
 
   com.mongodb.casbah.commons.conversions.scala.RegisterJodaTimeConversionHelpers()
 
-  lazy val client: MongoClient = MongoClient(
-    config.getString(s"mongo.$mongoConfig.host").getOrElse("localhost"),
-    config.getInt(s"mongo.$mongoConfig.port").getOrElse(27017))
-  val dbName: String = config.getString(s"mongo.$mongoConfig.dbname").getOrElse(
-    sys.error(s"Unable to find property: 'mongo.$mongoConfig.dbname'")
-  )
   val migrationCollectionName: String = "schema_migrations"
 
   def migrate(command: MigrationCommand, basePackage: String) = {
 
-    val db = client(dbName)
     client.setWriteConcern(WriteConcern.Safe)
 
     val migrations: immutable.SortedMap[Long, Class[_ <: MongoMigration]] = findMigrations(basePackage)
     val versions: Vector[Long] = migrations.keySet.toVector
-    val versionCollection = db(migrationCollectionName)
+    val versionCollection = mongoDB(migrationCollectionName)
     var appliedVersions = getAppliedVersions(versionCollection)
 
     case class ApplyAndRemove(applyVersions: Vector[Long], removeVersions: Vector[Long])
@@ -39,7 +33,7 @@ class MongoMigrator(mongoConfig: String, config: Configuration) extends LazyLogg
     val applyRemove = command match {
       case ApplyMigrations => ApplyAndRemove(versions, Vector.empty[Long])
       case ResetApplyMigrations =>
-        client.dropDatabase(dbName)
+        client.dropDatabase(mongoDB.getName)
         versionCollection.createIndex(
           MongoDBObject("version" -> 1),
           MongoDBObject("unique" -> true, "name" -> "UNIQ_VERSION_IDX"))
@@ -53,7 +47,7 @@ class MongoMigrator(mongoConfig: String, config: Configuration) extends LazyLogg
 
     applyRemove.removeVersions.foreach { version =>
       migrations.get(version) match {
-        case Some(clazz) => runMigration(clazz, Down, version, versionCollection, db)
+        case Some(clazz) => runMigration(clazz, Down, version, versionCollection, mongoDB)
         case None => sys.error(s"Database has migration version: $version but here is not migration class available " +
           "for that version")
       }
@@ -62,7 +56,7 @@ class MongoMigrator(mongoConfig: String, config: Configuration) extends LazyLogg
     applyRemove.applyVersions.foreach { version =>
       if (!appliedVersions.contains(version)) {
         migrations.get(version) match {
-          case Some(clazz) => runMigration(clazz, Up, version, versionCollection, db)
+          case Some(clazz) => runMigration(clazz, Up, version, versionCollection, mongoDB)
           case None => sys.error(s"Trying to migration to version: $version but migration class does not exist.")
         }
       }
