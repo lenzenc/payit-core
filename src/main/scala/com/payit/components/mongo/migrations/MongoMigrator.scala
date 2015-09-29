@@ -98,6 +98,8 @@ class MongoMigrator(val dbConfigName: String, val config: Configuration) extends
 
   private def findMigrations(packageName: String): immutable.SortedMap[Long, Class[_ <: MongoMigration]] = {
 
+    logger.debug(s"Mongo Migration looking for migrations in $packageName")
+
     var results = new TreeMap[Long, Class[_ <: MongoMigration]]
     val path = packageName.replace('.','/')
     val urls = this.getClass.getClassLoader.getResources(path)
