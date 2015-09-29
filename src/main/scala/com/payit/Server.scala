@@ -21,7 +21,6 @@ object Server extends App with LazyLogging with MongoMigrations {
     case _ => ApplyMigrations
   }
 
-  logger.debug(s"Running Mongo Migration Command: $command")
   migrate(command)
 
   implicit val actorSystem = ActorSystem()

@@ -21,6 +21,7 @@ class MongoMigrator(val dbConfigName: String, val config: Configuration) extends
 
   def migrate(command: MigrationCommand, basePackage: String) = {
 
+    logger.debug(s"Running Mongo Migration Command: $command using base package name: $basePackage")
     client.setWriteConcern(WriteConcern.Safe)
 
     val migrations: immutable.SortedMap[Long, Class[_ <: MongoMigration]] = findMigrations(basePackage)
@@ -29,6 +30,8 @@ class MongoMigrator(val dbConfigName: String, val config: Configuration) extends
     var appliedVersions = getAppliedVersions(versionCollection)
 
     case class ApplyAndRemove(applyVersions: Vector[Long], removeVersions: Vector[Long])
+
+    logger.debug(s"Mongo Migration Versions: $versions")
 
     val applyRemove = command match {
       case ApplyMigrations => ApplyAndRemove(versions, Vector.empty[Long])
@@ -79,8 +82,9 @@ class MongoMigrator(val dbConfigName: String, val config: Configuration) extends
                             db: MongoDB) =
   {
 
+    logger.debug(s"Running Mongo Migration: ${migrationClass.getName}")
     val migration = migrationClass.getConstructor(classOf[MongoDB]).newInstance(db)
-    logger.debug(s"Running Migration: ${migrationClass.getName}")
+
     direction match {
       case Up =>
         migration.up
@@ -157,7 +161,7 @@ class MongoMigrator(val dbConfigName: String, val config: Configuration) extends
 
     val classNames = new mutable.HashSet[String]
     val u = URLDecoder.decode(url.toString, "UTF-8")
-
+    logger.debug(s"Mongo Migration Url: ${url.toString}")
     if (u.startsWith("file:")) {
 
       val file = new File(u.substring("file:".length))
