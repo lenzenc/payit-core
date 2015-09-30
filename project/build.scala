@@ -63,6 +63,7 @@ object PayItCore extends Build {
       name := "payit-core",
       libraryDependencies ++= Seq(
         "org.specs2" %% "specs2-core" % "3.6.4" % "it,test",
+        "org.specs2" % "specs2-mock_2.11" % "3.6.4-20150928232002-999c515" % "it,test",
         "joda-time" % "joda-time" % "2.8.2" % "compile",
         "org.joda" % "joda-convert" % "1.7" % "compile",
         "com.typesafe" % "config" % "1.3.0" % "compile",
