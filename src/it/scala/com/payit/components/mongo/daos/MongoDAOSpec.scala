@@ -61,8 +61,6 @@ class MongoDAOSpec extends Specification with AroundEach {
 
   }
 
-  case class Foo(name: String)
-
   ".insert" >> {
     "when Option model Id is None" >> {
       val model = SpecModel("No Id")
