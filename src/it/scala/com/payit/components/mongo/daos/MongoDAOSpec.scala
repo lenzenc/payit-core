@@ -4,8 +4,9 @@ import com.mongodb.DBObject
 import com.mongodb.casbah.MongoClient
 import com.mongodb.casbah.commons.MongoDBObject
 import com.payit.components.core.Configuration
-import com.payit.components.core.models.Timestamps
+import com.payit.components.core.models.{ModelValidationException, Timestamps}
 import com.payit.components.mongo.models.{MongoModel, MongoId}
+import com.payit.components.validation._
 import org.specs2.execute.{Result, AsResult}
 import org.specs2.mutable.Specification
 import org.specs2.specification.AroundEach
@@ -36,6 +37,10 @@ class MongoDAOSpec extends Specification with AroundEach {
     timestamps: Timestamps = Timestamps()) extends MongoModel[SpecModelId, SpecModel]
   {
 
+    validations(
+      prop("name", { m => m.name }).is(Required())
+    )
+
     def withId(idValue: ObjectId) = copy(id = Some(SpecModelId(idValue)))
 
   }
@@ -60,8 +65,6 @@ class MongoDAOSpec extends Specification with AroundEach {
     }
 
   }
-
-  case class Foo(name: String)
 
   ".insert" >> {
     "when Option model Id is None" >> {
@@ -92,6 +95,9 @@ class MongoDAOSpec extends Specification with AroundEach {
           coll.findOneByID(id.value) must beSome
         }
       }
+    }
+    "it should throw an exception if the given model does not pass validations" >> {
+      new SpecModelDAO().insert(SpecModel("")) must throwA[ModelValidationException]
     }
   }
 

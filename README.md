@@ -3,6 +3,8 @@
 
 ## Running this Application
 
+[![Build Status](https://travis-ci.org/lenzenc/payit-core.svg?branch=master)](https://travis-ci.org/lenzenc/payit-core)
+
 ### From Outside SBT Console
     
     sbt run
