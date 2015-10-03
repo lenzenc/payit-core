@@ -4,7 +4,8 @@ scala:
 jdk:
 - oraclejdk8
 script:
-- sbt ++$TRAVIS_SCALA_VERSION test-all
+- sbt ++$TRAVIS_SCALA_VERSION clean coverage test-all
+after_success: "sbt coveralls"
 services:
 - mongodb
 deploy:
