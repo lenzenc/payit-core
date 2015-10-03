@@ -5,11 +5,11 @@ import org.specs2.validation.ValidationMatchers
 
 class ValidationsSpec extends Specification with ValidationMatchers {
 
-  case class NoValidationsSpecObj() extends Validations[NoValidationsSpecObj] {
+  case class NoValidationsSpecObj() extends Validations {
     def getValidator = validator
   }
 
-  case class ValidationSpecObj(v1: String, v2: String) extends Validations[ValidationSpecObj] {
+  case class ValidationSpecObj(v1: String, v2: String) extends Validations {
     def getValidator = validator
     validations(
       prop("v1", { v => v.v1 }).is(Required()),
