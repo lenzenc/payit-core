@@ -5,8 +5,7 @@ jdk:
 - oraclejdk8
 script:
 - sbt ++$TRAVIS_SCALA_VERSION clean coverage test-all
-#after_success: "sbt ++$TRAVIS_SCALA_VERSION coveralls"
-after_success: "coveralls"
+after_success: "sbt ++$TRAVIS_SCALA_VERSION coveralls"
 services:
 - mongodb
 deploy:
