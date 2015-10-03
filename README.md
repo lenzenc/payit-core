@@ -73,6 +73,18 @@ To run all unit tests run the following command in the SBT console;
 To run a single unit test specification run the following command in the SBT console;
 
     test-only com.payit.<<Spec Class>>
+    
+## Code Coverage
+    
+### Generate Reports
+
+    sbt clean coverage test-all
+    
+### Push to Coveralls.io
+    
+    sbt coveralls
+    
+`NOTE` - This should be added to SBT configuration to run these reports upon build. (overageEnabled := true)    
 
 ### Integration
 Integration tests are intended to be tests that are testing a stack of components together or that rely on outside dependencies, such as a database.
