@@ -1,6 +1,8 @@
 package com.payit.components.core.models
 
-trait Model[ID <: Id, M <: Model[ID, M]] {
+import com.payit.components.validation.Validations
+
+trait Model[ID <: Id, M <: Model[ID, M]] extends Validations {
 
   def id: Option[ID]
 
