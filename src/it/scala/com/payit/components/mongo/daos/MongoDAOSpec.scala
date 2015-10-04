@@ -118,18 +118,25 @@ class MongoDAOSpec extends Specification with AroundEach {
   ".update" >> {
     "when model has no Id" >> {
       "it should throw an exception" in new ExistingModelScope {
-//        dao.update(existingModel.copy(id = None)) must throwA[RuntimeException](message = "because id is None")
-        pending
+        dao.update(existingModel.copy(id = None)) must throwA[RuntimeException](message = "because id is None")
       }
     }
     "when model has an Id" >> {
       "it should throw an exception if the model does not pass validations" in new ExistingModelScope {
-//        dao.update(existingModel.copy(name = "")) must throwA[ModelValidationException]
-        pending
+        dao.update(existingModel.copy(name = "")) must throwA[ModelValidationException]
       }
-      "it should return a new instance of the model that was passed to the update method" >> pending
-      "it should update the updatedAt value on the given domain" >> pending
-      "it should persist the updates to the given model" >> pending
+      "it should return a new instance of the model that was passed to the update method" in new ExistingModelScope {
+        val updatedModel = existingModel.copy(name = "Updated Name")
+        dao.update(updatedModel) must not beTheSameAs(updatedModel)
+      }
+      "it should update the updatedAt value on the given domain" in new ExistingModelScope {
+        dao.update(existingModel.copy(name = "Updated Name")).timestamps.updatedAt.getMillis must beGreaterThan(
+          existingModel.timestamps.createdAt.getMillis)
+      }
+      "it should persist the updates to the given model" in new ExistingModelScope {
+        dao.update(existingModel.copy(name = "Updated Name"))
+        coll.findOneByID(existingModel.id.get.value) must beSome.like { case dbo => dbo.as[String]("name") must_== "Updated Name" }
+      }
     }
   }
 
