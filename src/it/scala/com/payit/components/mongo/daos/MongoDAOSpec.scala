@@ -133,4 +133,22 @@ class MongoDAOSpec extends Specification with AroundEach {
     }
   }
 
+  ".update" >> {
+    "when model has no Id" >> {
+      "it should throw an exception" in new ExistingModelScope {
+//        dao.update(existingModel.copy(id = None)) must throwA[RuntimeException](message = "because id is None")
+        pending
+      }
+    }
+    "when model has an Id" >> {
+      "it should throw an exception if the model does not pass validations" in new ExistingModelScope {
+//        dao.update(existingModel.copy(name = "")) must throwA[ModelValidationException]
+        pending
+      }
+      "it should return a new instance of the model that was passed to the update method" >> pending
+      "it should update the updatedAt value on the given domain" >> pending
+      "it should persist the updates to the given model" >> pending
+    }
+  }
+
 }

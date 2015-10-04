@@ -22,4 +22,6 @@ trait MongoDAO[ID <: MongoId, M <: MongoModel[ID, M]] extends DAO[ID, M] {
     }
   }
 
+  def update(model: M): M = model
+
 }

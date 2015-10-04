@@ -6,4 +6,6 @@ trait DAO[ID <: Id, M <: Model[ID, M]] {
 
   def insert(model: M): M
 
+  def update(model: M): M
+
 }
