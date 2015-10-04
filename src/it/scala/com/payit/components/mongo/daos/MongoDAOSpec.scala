@@ -7,7 +7,9 @@ import com.payit.components.core.Configuration
 import com.payit.components.core.models.{ModelValidationException, Timestamps}
 import com.payit.components.mongo.models.{MongoModel, MongoId}
 import com.payit.components.validation._
+import org.joda.time.DateTime
 import org.specs2.execute.{Result, AsResult}
+import org.specs2.matcher.{ThrownExpectations, Scope}
 import org.specs2.mutable.Specification
 import org.specs2.specification.AroundEach
 import com.mongodb.casbah.Imports._
@@ -43,26 +45,38 @@ class MongoDAOSpec extends Specification with AroundEach {
 
     def withId(idValue: ObjectId) = copy(id = Some(SpecModelId(idValue)))
 
+    def withUpdatedAt(now: DateTime = DateTime.now) = copy(timestamps = timestamps.withUpdatedAt(now))
+
+  }
+
+  val specModelMapper = new DocumentMapper[SpecModelId, SpecModel] {
+
+    def asDBObject(model: SpecModel): DBObject = MongoDBObject (
+      id(model),
+      timestamps(model),
+      "name" -> model.name
+    )
+
+    def fromDBObject(dbo: DBObject): SpecModel = SpecModel(
+      name = dbo.as[String]("name"),
+      id = Some(SpecModelId(id(dbo))),
+      timestamps = timestamps(dbo)
+    )
+
   }
 
   class SpecModelDAO extends MongoDAO[SpecModelId, SpecModel] {
 
     protected val collection = coll
-    protected val mapper = new DocumentMapper[SpecModelId, SpecModel] {
+    protected val mapper = specModelMapper
 
-      def asDBObject(model: SpecModel): DBObject = MongoDBObject (
-        id(model),
-        timestamps(model),
-        "name" -> model.name
-      )
+  }
 
-      def fromDBObject(dbo: DBObject): SpecModel = SpecModel(
-        name = dbo.as[String]("name"),
-        id = Some(SpecModelId(id(dbo))),
-        timestamps = timestamps(dbo)
-      )
+  trait ExistingModelScope extends Scope with ThrownExpectations {
 
-    }
+    val dao = new SpecModelDAO()
+    var existingModel = SpecModel("Name", Some(SpecModelId(new ObjectId)))
+    coll.insert(specModelMapper.asDBObject(existingModel))
 
   }
 
@@ -98,6 +112,24 @@ class MongoDAOSpec extends Specification with AroundEach {
     }
     "it should throw an exception if the given model does not pass validations" >> {
       new SpecModelDAO().insert(SpecModel("")) must throwA[ModelValidationException]
+    }
+  }
+
+  ".update" >> {
+    "when model has no Id" >> {
+      "it should throw an exception" in new ExistingModelScope {
+//        dao.update(existingModel.copy(id = None)) must throwA[RuntimeException](message = "because id is None")
+        pending
+      }
+    }
+    "when model has an Id" >> {
+      "it should throw an exception if the model does not pass validations" in new ExistingModelScope {
+        //        dao.update(existingModel.copy(name = "")) must throwA[ModelValidationException]
+        pending
+      }
+      "it should return a new instance of the model that was passed to the update method" >> pending
+      "it should update the updatedAt value on the given domain" >> pending
+      "it should persist the updates to the given model" >> pending
     }
   }
 

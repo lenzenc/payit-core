@@ -3,6 +3,7 @@ package com.payit.profile.models
 import com.mongodb.casbah.Imports.ObjectId
 import com.payit.components.core.models.Timestamps
 import com.payit.components.mongo.models.{MongoId, MongoModel}
+import org.joda.time.DateTime
 
 case class UserId(value: ObjectId) extends MongoId
 
@@ -21,5 +22,7 @@ extends MongoModel[UserId, User]
 {
 
   def withId(idValue: ObjectId) = copy(id = Some(UserId(idValue)))
+
+  def withUpdatedAt(now: DateTime = DateTime.now) = copy(timestamps = timestamps.withUpdatedAt(now))
 
 }
