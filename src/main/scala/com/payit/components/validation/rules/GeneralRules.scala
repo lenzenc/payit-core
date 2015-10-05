@@ -68,4 +68,15 @@ trait GeneralRules {
 
   }
 
+  case object ValidDomain extends ValidationRule[String] {
+
+    val ValidDomain = """(?i)\b[A-Z0-9.-]+\.[A-Z]{2,8}\b""".r
+
+    def apply(value: String): Validated[RuleFailure, String] = {
+      if (value != null && ValidDomain.pattern.matcher(value).matches) Success(value)
+      else failed("invalidDomain", "is an invalid domain")
+    }
+
+  }
+
 }
