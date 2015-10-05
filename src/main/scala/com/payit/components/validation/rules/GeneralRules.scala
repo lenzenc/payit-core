@@ -57,4 +57,26 @@ trait GeneralRules {
 
   }
 
+  case object ValidEmail extends ValidationRule[String] {
+
+    val ValidEmail = """(?i)\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,8}\b""".r
+
+    def apply(value: String): Validated[RuleFailure, String] = {
+      if (value != null && ValidEmail.pattern.matcher(value).matches) Success(value)
+      else failed("invalidEmail", "is an invalid email")
+    }
+
+  }
+
+  case object ValidDomain extends ValidationRule[String] {
+
+    val ValidDomain = """(?i)\b[A-Z0-9.-]+\.[A-Z]{2,8}\b""".r
+
+    def apply(value: String): Validated[RuleFailure, String] = {
+      if (value != null && ValidDomain.pattern.matcher(value).matches) Success(value)
+      else failed("invalidDomain", "is an invalid domain")
+    }
+
+  }
+
 }
