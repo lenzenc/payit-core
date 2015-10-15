@@ -1,5 +1,5 @@
 package com.payit.components.core.models
 
-import com.payit.components.validation.{ValidationFailure, FailureKey}
+import com.payit.validations.ValidationFailure
 
-class ModelValidationException(failureMap: Map[FailureKey, Seq[ValidationFailure]]) extends RuntimeException
+class ModelValidationException(failureMap: Map[String, Seq[ValidationFailure]]) extends RuntimeException

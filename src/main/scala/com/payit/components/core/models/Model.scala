@@ -1,6 +1,6 @@
 package com.payit.components.core.models
 
-import com.payit.components.validation.Validations
+import com.payit.validations._
 import org.joda.time.DateTime
 
 trait Model[ID <: Id, M <: Model[ID, M]] extends Validations {

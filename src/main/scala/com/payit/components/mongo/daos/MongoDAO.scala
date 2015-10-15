@@ -6,7 +6,7 @@ import com.payit.components.core.daos.DAO
 import com.payit.components.core.models.ModelValidationException
 import com.payit.components.mongo.models.{MongoModel, MongoId}
 import com.mongodb.casbah.Imports.ObjectId
-import com.payit.components.validation.{Failed, Success}
+import com.payit.validations.{Failed, Success}
 
 trait MongoDAO[ID <: MongoId, M <: MongoModel[ID, M]] extends DAO[ID, M] {
 

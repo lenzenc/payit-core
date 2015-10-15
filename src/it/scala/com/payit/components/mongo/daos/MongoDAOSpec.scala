@@ -6,8 +6,8 @@ import com.mongodb.casbah.commons.MongoDBObject
 import com.payit.components.core.Configuration
 import com.payit.components.core.models.{ModelValidationException, Timestamps}
 import com.payit.components.mongo.models.{MongoModel, MongoId}
-import com.payit.components.validation._
 import org.joda.time.DateTime
+import com.payit.validations._
 import org.specs2.execute.{Result, AsResult}
 import org.specs2.matcher.{ThrownExpectations, Scope}
 import org.specs2.mutable.Specification
